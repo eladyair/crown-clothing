@@ -3,29 +3,32 @@ import { Link } from 'react-router-dom';
 import './header.styles.scss';
 // Assets
 import { ReactComponent as Logo } from '../../assets/crown.svg';
+// Firebase Auth
+import { auth } from '../../firebase/firebase.utils';
 
-class Header extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <div className='header'>
-                <Link to='/' className='logo-container'>
-                    <Logo className='logo' />
-                </Link>
-                <div className='header-links'>
-                    <Link className='header-link' to='/shop'>
-                        SHOP
-                    </Link>
-                    <Link className='header-link' to='/contact'>
-                        CONTACT
-                    </Link>
+const Header = ({ currentUser }) => (
+    <div className='header'>
+        <Link to='/' className='logo-container'>
+            <Logo className='logo' />
+        </Link>
+        <div className='header-links'>
+            <Link className='header-link' to='/shop'>
+                SHOP
+            </Link>
+            <Link className='header-link' to='/contact'>
+                CONTACT
+            </Link>
+            {currentUser ? (
+                <div className='header-link' onClick={() => auth.signOut()}>
+                    SIGN OUT
                 </div>
-            </div>
-        );
-    }
-}
+            ) : (
+                <Link className='header-link' to='/signin'>
+                    SIGN IN
+                </Link>
+            )}
+        </div>
+    </div>
+);
 
 export default Header;
