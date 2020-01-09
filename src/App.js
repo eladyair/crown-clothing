@@ -7,8 +7,8 @@ import Header from './components/header/header.component';
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
-// Firebase Auth
-import { auth } from './firebase/firebase.utils';
+// Importing what we need from firebase utils
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 class App extends Component {
     unsubscribeFromAuth = null;
@@ -36,10 +36,27 @@ class App extends Component {
 
     componentDidMount() {
         // Setting a listener for the firebase sign in by google auth
-        this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-            this.setState({
-                currentUser: user
-            });
+        this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+            // If user using google sign in exist
+            if (userAuth) {
+                // Reteriving the user (in case he's not yet in the database, it will insert him)
+                const userRef = await createUserProfileDocument(userAuth);
+
+                // Setting a listenner on the user(onSnapshot) to wait till it receives it's details
+                userRef.onSnapshot(snapshot => {
+                    // Once a snapshot of the user exist, we set he's details in the state in currentUser
+                    this.setState({
+                        currentUser: {
+                            id: snapshot.id,
+                            ...snapshot.data()
+                        }
+                    });
+
+                    console.log(this.state);
+                });
+            }
+
+            this.setState({ currentUser: userAuth });
         });
     }
 
