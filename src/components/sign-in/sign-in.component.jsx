@@ -30,6 +30,8 @@ class SignIn extends Component {
 
         try {
             await auth.signInWithEmailAndPassword(email, password);
+
+            // Resetting the form fields in the state to their default values in order to clear the form.
             this.setState({ email: '', password: '' });
         } catch (error) {
             console.error(error);

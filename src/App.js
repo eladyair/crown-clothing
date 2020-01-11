@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom'; // Using the react router to handle the app routes
+import { connect } from 'react-redux';
 import './App.css';
 
 // Components
@@ -9,22 +10,16 @@ import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUp from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 // Importing what we need from firebase utils
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+// Redux Actions
+import { setCurrentUser } from './redux/user/user.actions';
 
 class App extends Component {
     unsubscribeFromAuth = null;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            currentUser: null
-        };
-    }
-
     render() {
         return (
             <div>
-                <Header currentUser={this.state.currentUser} />
+                <Header />
                 <Switch>
                     <Route exact path='/' component={HomePage} />
                     <Route exact path='/shop' component={ShopPage} />
@@ -35,9 +30,11 @@ class App extends Component {
     }
 
     componentDidMount() {
-        // Setting a listener for the firebase sign in by google auth
+        const { setCurrentUser } = this.props;
+
+        // Setting a listener to check once the app is loaded if a user already signed in
         this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-            // If user using google sign in exist
+            // If user exist
             if (userAuth) {
                 // Reteriving the user (in case he's not yet in the database, it will insert him)
                 const userRef = await createUserProfileDocument(userAuth);
@@ -45,7 +42,7 @@ class App extends Component {
                 // Setting a listenner on the user(onSnapshot) to wait till it receives it's details
                 userRef.onSnapshot(snapshot => {
                     // Once a snapshot of the user exist, we set he's details in the state in currentUser
-                    this.setState({
+                    setCurrentUser({
                         currentUser: {
                             id: snapshot.id,
                             ...snapshot.data()
@@ -54,7 +51,7 @@ class App extends Component {
                 });
             }
 
-            this.setState({ currentUser: userAuth });
+            setCurrentUser(userAuth);
         });
     }
 
@@ -65,4 +62,8 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+    setCurrentUser: user => dispatch(setCurrentUser(user))
+});
+
+export default connect(null, mapDispatchToProps)(App);

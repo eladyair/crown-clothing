@@ -35,6 +35,7 @@ class SignUp extends Component {
 
             await createUserProfileDocument(user, { displayName });
 
+            // Resetting the form fields in the state to their default values in order to clear the form.
             this.setState({
                 displayName: '',
                 email: '',
