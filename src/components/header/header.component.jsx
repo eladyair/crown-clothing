@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import { connect } from 'react-redux';
 // Style
-import './header.styles.scss';
+//import './header.styles.scss';
 // Assets
 import { ReactComponent as Logo } from '../../assets/crown.svg';
+
+// Styled Components
+import { HeaderContainer, LogoContainer, HeaderLinksContainer, HeaderLink } from './header.styles';
+
 // Components
 import CartIcon from '../cart-icon/cart-icon.component';
 import CartDropdown from '../cart-dropdown/cart-dropdown.component';
@@ -16,30 +19,24 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCartHidden } from '../../redux/cart/cart.selectors';
 
 const Header = ({ currentUser, hidden }) => (
-    <div className='header'>
-        <Link to='/' className='logo-container'>
+    <HeaderContainer>
+        <LogoContainer to='/'>
             <Logo className='logo' />
-        </Link>
-        <div className='header-links'>
-            <Link className='header-link' to='/shop'>
-                SHOP
-            </Link>
-            <Link className='header-link' to='/contact'>
-                CONTACT
-            </Link>
+        </LogoContainer>
+        <HeaderLinksContainer>
+            <HeaderLink to='/shop'>SHOP</HeaderLink>
+            <HeaderLink to='/contact'>CONTACT</HeaderLink>
             {currentUser ? (
-                <div className='header-link' onClick={() => auth.signOut()}>
+                <HeaderLink as='div' onClick={() => auth.signOut()}>
                     SIGN OUT
-                </div>
+                </HeaderLink>
             ) : (
-                <Link className='header-link' to='/signin'>
-                    SIGN IN
-                </Link>
+                <HeaderLink to='/signin'>SIGN IN</HeaderLink>
             )}
             <CartIcon />
-        </div>
+        </HeaderLinksContainer>
         {hidden ? null : <CartDropdown />}
-    </div>
+    </HeaderContainer>
 );
 
 const mapStateToProps = createStructuredSelector({
