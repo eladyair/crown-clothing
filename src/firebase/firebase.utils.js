@@ -17,9 +17,9 @@ const config = {
 firebase.initializeApp(config);
 
 // Setting google to be this app option for authentication
-const provider = new firebase.auth.GoogleAuthProvider();
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
 // Setting this google provider with parameters
-provider.setCustomParameters({ prompt: 'select_account' });
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 // Exporting a fuction that will add the user that signed in using google to the database
 export const createUserProfileDocument = async (userAuth, additionalData) => {
@@ -92,11 +92,20 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
     return await batch.commit();
 };
 
+export const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        const unsubscribe = auth.onAuthStateChanged(userAuth => {
+            unsubscribe();
+            resolve(userAuth);
+        }, reject);
+    });
+};
+
 // Exporting the firebase auth
 export const auth = firebase.auth();
 // Exporting the firebase firestore(database)
 export const firestore = firebase.firestore();
 // Exporting a sign in function using firebase auth along with the provider we set up
-export const signInWithGoogle = () => auth.signInWithPopup(provider);
+export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
 // Exporting firebase
 export default firebase;

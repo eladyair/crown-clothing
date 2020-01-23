@@ -5,7 +5,6 @@ import './collection.styles.scss';
 // Components
 import CollectionItem from '../../components/collection-item/collection-item.component';
 // Redux related
-import { createStructuredSelector } from 'reselect';
 import { selectCollection } from '../../redux/shop/shop.selectors';
 
 const CollectionPage = ({ collection }) => {
