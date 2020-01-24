@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'; // Using the react router to handle the app routes
 import { connect } from 'react-redux';
 import './App.css';
@@ -14,28 +14,23 @@ import { checkUserSession } from './redux/user/user.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from './redux/user/user.selectors';
 
-class App extends Component {
-    //unsubscribeFromAuth = null;
-
-    render() {
-        return (
-            <div>
-                <Header />
-                <Switch>
-                    <Route exact path='/' component={HomePage} />
-                    <Route path='/shop' component={ShopPage} />
-                    <Route exact path='/checkout' component={CheckoutPage} />
-                    <Route exact path='/signin' render={() => (this.props.currentUser ? <Redirect to='/' /> : <SignInAndSignUp />)} />
-                </Switch>
-            </div>
-        );
-    }
-
-    componentDidMount() {
-        const { checkUserSession } = this.props;
+const App = ({ currentUser, checkUserSession }) => {
+    useEffect(() => {
         checkUserSession();
-    }
-}
+    }, [checkUserSession]);
+
+    return (
+        <div>
+            <Header />
+            <Switch>
+                <Route exact path='/' component={HomePage} />
+                <Route path='/shop' component={ShopPage} />
+                <Route exact path='/checkout' component={CheckoutPage} />
+                <Route exact path='/signin' render={() => (currentUser ? <Redirect to='/' /> : <SignInAndSignUp />)} />
+            </Switch>
+        </div>
+    );
+};
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser
@@ -44,4 +39,5 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
     checkUserSession: () => dispatch(checkUserSession())
 });
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);
