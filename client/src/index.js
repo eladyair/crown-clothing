@@ -5,6 +5,9 @@ import { Provider } from 'react-redux'; // Setting up redux for for the app
 
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './redux/store'; // the redux store (the state for the all app)
+
+import * as serviceWorker from './serviceWorker';
+
 import './index.css';
 import App from './App';
 
@@ -18,3 +21,5 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
+
+serviceWorker.register();
