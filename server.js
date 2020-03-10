@@ -14,17 +14,18 @@ const stripe = require('stripe')(process.env.STRIPE_SECERT_KEY);
 // Initializing the server
 const app = express();
 
-// Adding compression to compress files once pushed to production
-app.use(compression());
 // Initializing the json middleware, to enable parsing incoming json requests
 app.use(express.json());
 // Initializing the cross origin middleware, to enable receving requests from our client app that runs on a diffrent port
-// Enforcing HTTPS
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
+
 app.use(cors());
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
+    // Adding compression to compress files once pushed to production
+    app.use(compression());
+    // Enforcing HTTPS
+    app.use(enforce.HTTPS({ trustProtoHeader: true }));
     // Set static folder
     app.use(express.static(path.join(__dirname, 'client/build')));
 
